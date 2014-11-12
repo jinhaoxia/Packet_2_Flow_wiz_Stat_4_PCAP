@@ -1,0 +1,13 @@
+﻿生成启动时间为 2014/11/13 6:33:08。
+     1>项目“F:\Seclab\Project\NetworkFlow\PktInfo_on_vs\1031.vcxproj”在节点 2 上(build 个目标)。
+     1>InitializeBuildStatus:
+         正在对“.\Debug\1031.unsuccessfulbuild”执行 Touch 任务。
+       ClCompile:
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _VC80_UPGRADE=0x0600 /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /Gy- /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug\\" /Fd".\Debug\vc100.pdb" /FR".\Debug\\" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+     1>f:\seclab\project\networkflow\pktinfo_on_vs\pkt_handler.h(66): error C2660: “stat_cal”: 函数不接受 0 个参数
+     1>已完成生成项目“F:\Seclab\Project\NetworkFlow\PktInfo_on_vs\1031.vcxproj”(build 个目标)的操作 - 失败。
+
+生成失败。
+
+已用时间 00:00:00.93
