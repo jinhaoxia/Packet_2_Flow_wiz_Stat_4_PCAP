@@ -8,6 +8,23 @@ typedef struct _info_head{
 	u_int dest_ip;
 	u_int src_port; 
 	u_int dest_port;
+
+	bool operator<(const struct _info_head & other) const {
+	//Must be overloaded as public if this struct is being used as the KEY in map.
+		if (this->src_ip < other.src_ip) return true;
+		if (this->dest_ip < other.dest_ip) return true;
+		if (this->src_port < other.src_port) return true;
+		if (this->dest_port < other.dest_port) return true;
+		return false;
+	}
+
+	bool operator==(const struct _info_head & other) const{
+		//Optional
+		return	this->src_ip == other.src_ip && 
+				this->dest_ip == other.dest_ip &&
+				this->src_port == other.src_port &&
+				this->dest_port == other.dest_port;
+	}
 } info_head;
 
 typedef struct _pkt_info{

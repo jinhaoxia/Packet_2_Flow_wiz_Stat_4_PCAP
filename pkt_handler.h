@@ -10,10 +10,10 @@ using namespace std;
 
 class pkt_list{
 public:
-	static list <pkt> head_to_pkt;
+	list<pkt> head_to_pkt;
 
 public:
-	static int append(const info_head & head, const pkt_info & info){
+	int append(const info_head & head, const pkt_info & info){
 		pkt tmp;
 		tmp.head = head;
 		tmp.info = info;
@@ -26,19 +26,18 @@ public:
 
 class pkt_info_map{
 public:
-	static map<info_head, list<pkt_info> > head_to_pkts;
+	map<info_head, list<pkt_info> > head_to_pkts;
 
 public:
-	static int handler(const pkt_list & p){
-		typedef list <pkt>::const_iterator pkt_it;
-		typedef map <info_head, list<pkt_info> >::iterator map_it;
+	int handler(const pkt_list & p){
+		typedef list<pkt>::const_iterator pkt_it;
+		typedef map<info_head, list<pkt_info> >::iterator map_it;
 
 		pkt_it pi = p.head_to_pkt.begin();
-		
 
 		for(; pi != p.head_to_pkt.end(); ++ pi){
 			map_it mi = head_to_pkts.find(pi->head);
-			if (mi == head_to_pkts.end() ){ // Cannot find the key.
+			if (mi == head_to_pkts.end() ){
 				list<pkt_info> temp_list;
 				temp_list.push_back(pi->info);
 
@@ -54,13 +53,13 @@ public:
 
 class flow_info_map{
 public:
-	static map <info_head, flow_info> head_to_flow;
+	map <info_head, flow_info> head_to_flow;
 
 public:
-	static int handler(const pkt_info_map & p){		
-		typedef map <info_head, list<pkt_info> >::const_iterator pkt_map_it;
-		typedef map <info_head, flow_info>::iterator flow_map_it;
-
+	int handler(const pkt_info_map & p){
+		typedef map<info_head, list<pkt_info> >::const_iterator pkt_map_it;
+		typedef map<info_head, flow_info>::iterator flow_map_it;
+		
 		pkt_map_it pmi = p.head_to_pkts.begin();
 
 		for(; pmi != p.head_to_pkts.end(); ++ pmi){
@@ -74,12 +73,12 @@ public:
 
 class uni_dir_flow_list{
 public:
-	static map<info_head, uni_dir_flow> head_to_uni_dir_flow;
+	map<info_head, uni_dir_flow> head_to_uni_dir_flow;
 
 public:
-	static int handler(const flow_info_map & f){
-		typedef map <info_head, flow_info>::const_iterator flow_map_it;
-		typedef map <info_head, uni_dir_flow>::iterator uni_dir_flow_it;
+	int handler(const flow_info_map & f){
+		typedef map<info_head, flow_info>::const_iterator flow_map_it;
+		typedef map<info_head, uni_dir_flow>::iterator uni_dir_flow_it;
 
 		flow_map_it fmi = f.head_to_flow.begin();
 
@@ -88,14 +87,11 @@ public:
 			uni_dir_flow_it udfi_2 = head_to_uni_dir_flow.find(reversed_info_head(fmi->first));
 
 			if( udfi_1 == head_to_uni_dir_flow.end() &&
-				udfi_2 == head_to_uni_dir_flow.end() ){ // Cannot find both key.
+				udfi_1 == head_to_uni_dir_flow.end() ){
 				uni_dir_flow temp;
 				temp.A = fmi->second;
 				head_to_uni_dir_flow.insert(make_pair(fmi->first, temp));
 			}
-
-			else
-				udfi_2->second.B = fmi->second;
 		}
 
 		return 1;
