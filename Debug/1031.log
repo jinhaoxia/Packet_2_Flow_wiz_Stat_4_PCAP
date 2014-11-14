@@ -1,13 +1,81 @@
-﻿生成启动时间为 2014/11/13 6:33:08。
-     1>项目“F:\Seclab\Project\NetworkFlow\PktInfo_on_vs\1031.vcxproj”在节点 2 上(build 个目标)。
-     1>InitializeBuildStatus:
+﻿生成启动时间为 2014/11/14 18:56:38。
+     1>项目“F:\Seclab\Github\Packet_2_Flow_wiz_Stat_4_PCAP\1031.vcxproj”在节点 2 上(rebuild 个目标)。
+     1>_PrepareForClean:
+         正在删除文件“.\Debug\1031.lastbuildstate”。
+       InitializeBuildStatus:
          正在对“.\Debug\1031.unsuccessfulbuild”执行 Touch 任务。
        ClCompile:
          C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _VC80_UPGRADE=0x0600 /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /Gy- /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug\\" /Fd".\Debug\vc100.pdb" /FR".\Debug\\" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>f:\seclab\project\networkflow\pktinfo_on_vs\pkt_handler.h(66): error C2660: “stat_cal”: 函数不接受 0 个参数
-     1>已完成生成项目“F:\Seclab\Project\NetworkFlow\PktInfo_on_vs\1031.vcxproj”(build 个目标)的操作 - 失败。
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(39): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files\microsoft visual studio 10.0\vc\include\time.inl(112) : 参见“localtime”的声明
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(48): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files\microsoft visual studio 10.0\vc\include\stdio.h(371) : 参见“sprintf”的声明
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(51): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files\microsoft visual studio 10.0\vc\include\string.h(105) : 参见“strcpy”的声明
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(52): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files\microsoft visual studio 10.0\vc\include\string.h(110) : 参见“strcat”的声明
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(53): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files\microsoft visual studio 10.0\vc\include\string.h(110) : 参见“strcat”的声明
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(54): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files\microsoft visual studio 10.0\vc\include\string.h(110) : 参见“strcat”的声明
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(57): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files\microsoft visual studio 10.0\vc\include\stdio.h(234) : 参见“fopen”的声明
+     1>c:\program files\microsoft visual studio 10.0\vc\include\xfunctional(125): error C2784: “bool std::operator <(const std::_Tree<_Traits> &,const std::_Tree<_Traits> &)”: 未能从“const info_head”为“const std::_Tree<_Traits> &”推导 模板 参数
+                 c:\program files\microsoft visual studio 10.0\vc\include\xtree(1885) : 参见“std::operator <”的声明
+                 c:\program files\microsoft visual studio 10.0\vc\include\xfunctional(124): 编译类 模板 成员函数“bool std::less<_Ty>::operator ()(const _Ty &,const _Ty &) const”时
+                 with
+                 [
+                     _Ty=info_head
+                 ]
+                 c:\program files\microsoft visual studio 10.0\vc\include\map(71): 参见对正在编译的类 模板 实例化“std::less<_Ty>”的引用
+                 with
+                 [
+                     _Ty=info_head
+                 ]
+                 c:\program files\microsoft visual studio 10.0\vc\include\xtree(451): 参见对正在编译的类 模板 实例化“std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,_Mfl>”的引用
+                 with
+                 [
+                     _Kty=info_head,
+                     _Ty=std::list<pkt_info>,
+                     _Pr=std::less<info_head>,
+                     _Alloc=std::allocator<std::pair<const info_head,std::list<pkt_info>>>,
+                     _Mfl=false
+                 ]
+                 c:\program files\microsoft visual studio 10.0\vc\include\xtree(520): 参见对正在编译的类 模板 实例化“std::_Tree_nod<_Traits>”的引用
+                 with
+                 [
+                     _Traits=std::_Tmap_traits<info_head,std::list<pkt_info>,std::less<info_head>,std::allocator<std::pair<const info_head,std::list<pkt_info>>>,false>
+                 ]
+                 c:\program files\microsoft visual studio 10.0\vc\include\xtree(659): 参见对正在编译的类 模板 实例化“std::_Tree_val<_Traits>”的引用
+                 with
+                 [
+                     _Traits=std::_Tmap_traits<info_head,std::list<pkt_info>,std::less<info_head>,std::allocator<std::pair<const info_head,std::list<pkt_info>>>,false>
+                 ]
+                 c:\program files\microsoft visual studio 10.0\vc\include\map(81): 参见对正在编译的类 模板 实例化“std::_Tree<_Traits>”的引用
+                 with
+                 [
+                     _Traits=std::_Tmap_traits<info_head,std::list<pkt_info>,std::less<info_head>,std::allocator<std::pair<const info_head,std::list<pkt_info>>>,false>
+                 ]
+                 f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\pkt_handler.h(29): 参见对正在编译的类 模板 实例化“std::map<_Kty,_Ty>”的引用
+                 with
+                 [
+                     _Kty=info_head,
+                     _Ty=std::list<pkt_info>
+                 ]
+     1>c:\program files\microsoft visual studio 10.0\vc\include\xfunctional(125): error C2784: “bool std::operator <(const std::list<_Ty,_Ax> &,const std::list<_Ty,_Ax> &)”: 未能从“const info_head”为“const std::list<_Ty,_Ax> &”推导 模板 参数
+                 c:\program files\microsoft visual studio 10.0\vc\include\list(1588) : 参见“std::operator <”的声明
+     1>c:\program files\microsoft visual studio 10.0\vc\include\xfunctional(125): error C2784: “bool std::operator <(const std::unique_ptr<_Ty,_Dx> &,const std::unique_ptr<_Ty2,_Dx2> &)”: 未能从“const info_head”为“const std::unique_ptr<_Ty,_Dx> &”推导 模板 参数
+                 c:\program files\microsoft visual studio 10.0\vc\include\memory(2582) : 参见“std::operator <”的声明
+     1>c:\program files\microsoft visual studio 10.0\vc\include\xfunctional(125): error C2784: “bool std::operator <(const std::reverse_iterator<_RanIt> &,const std::reverse_iterator<_RanIt2> &)”: 未能从“const info_head”为“const std::reverse_iterator<_RanIt> &”推导 模板 参数
+                 c:\program files\microsoft visual studio 10.0\vc\include\xutility(1356) : 参见“std::operator <”的声明
+     1>c:\program files\microsoft visual studio 10.0\vc\include\xfunctional(125): error C2784: “bool std::operator <(const std::_Revranit<_RanIt,_Base> &,const std::_Revranit<_RanIt2,_Base2> &)”: 未能从“const info_head”为“const std::_Revranit<_RanIt,_Base> &”推导 模板 参数
+                 c:\program files\microsoft visual studio 10.0\vc\include\xutility(1179) : 参见“std::operator <”的声明
+     1>c:\program files\microsoft visual studio 10.0\vc\include\xfunctional(125): error C2784: “bool std::operator <(const std::pair<_Ty1,_Ty2> &,const std::pair<_Ty1,_Ty2> &)”: 未能从“const info_head”为“const std::pair<_Ty1,_Ty2> &”推导 模板 参数
+                 c:\program files\microsoft visual studio 10.0\vc\include\utility(318) : 参见“std::operator <”的声明
+     1>c:\program files\microsoft visual studio 10.0\vc\include\xfunctional(125): error C2676: 二进制“<”:“const info_head”不定义该运算符或到预定义运算符可接收的类型的转换
+     1>已完成生成项目“F:\Seclab\Github\Packet_2_Flow_wiz_Stat_4_PCAP\1031.vcxproj”(rebuild 个目标)的操作 - 失败。
 
 生成失败。
 
-已用时间 00:00:00.93
+已用时间 00:00:01.79

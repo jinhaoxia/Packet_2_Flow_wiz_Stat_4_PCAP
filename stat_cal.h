@@ -6,9 +6,12 @@
 
 using namespace std;
 
-flow_info stat_cal(list<pkt_info> & p){
-	typedef list<pkt_info>::iterator pkt_info_it;
+flow_info stat_cal(const list<pkt_info> & p){
+	typedef list<pkt_info>::const_iterator pkt_info_it;
+	pkt_info_it pii = p.begin();
 	flow_info cur_flow_info;
+	//20141113
+
 	return cur_flow_info;
 }
 
