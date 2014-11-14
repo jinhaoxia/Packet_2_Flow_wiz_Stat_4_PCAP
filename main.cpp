@@ -11,6 +11,10 @@ void dispatcher_handler(u_char *, const struct pcap_pkthdr *, const u_char *);
 
 FILE * file;
 
+static pkt_list pl;
+static pkt_info_map pim;
+static flow_info_map fim;
+
 int main(int argc, char **argv)
 {
 	pcap_t *fp;
@@ -59,9 +63,14 @@ int main(int argc, char **argv)
 	/* read and dispatch packets until EOF is reached */
 	pcap_loop(fp, 0, dispatcher_handler, NULL);
 
-	fclose(file);
 
 	pcap_close(fp);
+
+	pim.handler(pl);
+	fim.handler(pim);
+
+	fclose(file);
+
 	return 0;
 }
 
@@ -118,16 +127,30 @@ void dispatcher_handler(u_char *temp1,
 		}
 
 		u_char_cpy(src_ip, pkt_data + ETHER_HEAD_LEN + 12, 4);
-		u_char_cpy(dest_ip, pkt_data + ETHER_HEAD_LEN + 18, 4);
+		u_char_cpy(dest_ip, pkt_data + ETHER_HEAD_LEN + 16, 4);
 		u_char_cpy(src_port, pkt_data + ETHER_HEAD_LEN + ((u_int)ip_header_len * 4), 2);
 		u_char_cpy(dest_port, pkt_data + ETHER_HEAD_LEN + ((u_long)ip_header_len * 4) + 2, 2);
 
 		unsigned int payload_len = (u_int)total_len[0] * 256 + (u_int)total_len[1] - (u_int)ip_header_len * 4 - (u_int)trans_header_len * 4;
 
-		fprintf(file, "%d.%d.%d.%d, %d, ", src_ip[0], src_ip[1], src_ip[2], src_ip[3], ((u_int)src_port[0] << 8) & (u_int)src_port[1]);
-		fprintf(file, "%d.%d.%d.%d, %d, ", dest_ip[0], dest_ip[1], dest_ip[2], dest_ip[3], ((u_int)dest_port[0] << 8) & (u_int)dest_port[1]);
-		fprintf(file, "%ld, %ld, %ld, %ld\n", header->ts.tv_sec, header->ts.tv_usec, header->len, payload_len);
+		//fprintf(file, "%d.%d.%d.%d, %d, ", src_ip[0], src_ip[1], src_ip[2], src_ip[3], ((u_int)src_port[0] << 8) & (u_int)src_port[1]);
+		//fprintf(file, "%d.%d.%d.%d, %d, ", dest_ip[0], dest_ip[1], dest_ip[2], dest_ip[3], ((u_int)dest_port[0] << 8) & (u_int)dest_port[1]);
+		//fprintf(file, "%ld, %ld, %ld, %ld\n", header->ts.tv_sec, header->ts.tv_usec, header->len, payload_len);
 
+		info_head tih;
+		pkt_info tpi;
+
+		tih.src_ip = ((u_int)src_ip[0] << 24) & ((u_int)src_ip[1] << 16) & ((u_int)src_ip[2] << 8) & (u_int)src_ip[3];
+		tih.dest_ip = ((u_int)dest_ip[0] << 24) & ((u_int)dest_ip[1] << 16) & ((u_int)dest_ip[2] << 8) & (u_int)dest_ip[3];
+		tih.src_port = ((u_int)src_port[0] << 8) & (u_int)src_port[1];
+		tih.dest_port = ((u_int)dest_port[0] << 8) & (u_int)dest_port[1];
+
+		tpi.sec = header->ts.tv_sec;
+		tpi.usec = header->ts.tv_usec;
+		tpi.pkt_size = header->len;
+		tpi.pld_size = payload_len;
+		
+		pl.append(tih, tpi);
 
 	}
 

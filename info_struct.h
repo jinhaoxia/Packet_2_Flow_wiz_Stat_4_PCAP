@@ -10,7 +10,7 @@ typedef struct _info_head{
 	u_int dest_port;
 
 	bool operator<(const struct _info_head & other) const {
-	//Must be overloaded as public if this struct is being used as the KEY in map.
+	//Must be overloaded as public if this struct is being used as the KEY in STL-map.
 		if (this->src_ip < other.src_ip) return true;
 		if (this->dest_ip < other.dest_ip) return true;
 		if (this->src_port < other.src_port) return true;
@@ -29,37 +29,38 @@ typedef struct _info_head{
 
 typedef struct _pkt_info{
 	u_long sec;
-	u_long u_sec;
-	u_int pkt_size;
-	u_int pld_size;
+	u_long usec;
+	u_long pkt_size;
+	u_long pld_size;
 } pkt_info;
 
 typedef struct _flow_info{
 	u_long total_pkt_size;
 	u_long total_pld_size;
 	u_long total_pkt_count;
-	u_long total_dur_time;
 
-	u_int max_pkt_size;
-	u_int min_pkt_size;
+	u_long max_pkt_size;
+	u_long min_pkt_size;
 	double mean_pkt_size;
-	double std_dev_pkt_size;
+	double stde_pkt_size;
 	double skew_pkt_size;
 	double kurt_pkt_size;
 
-	u_int max_pld_size;
-	u_int min_pld_size;
+	u_long max_pld_size;
+	u_long min_pld_size;
 	double mean_pld_size;
-	double std_dev_pld_size;
+	double stde_pld_size;
 	double skew_pld_size;
 	double kurt_pld_size;
 
-	u_int max_tim_intv;
-	u_int min_time_intv;
-	double mean_time_intv;
-	double std_dev_time_intv;
-	double skew_time_intv;
-	double kurt_time_intv;
+	u_long max_tim_intv;
+	u_long min_tim_intv;
+	double mean_tim_intv;
+	double stde_tim_intv;
+	double skew_tim_intv;
+	double kurt_tim_intv;
+
+//	struct _flow_info(const list<pkt_info> &);
 } flow_info;
 
 typedef struct _pkt{
