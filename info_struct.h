@@ -1,21 +1,19 @@
-#include <pcap.h>
-
 #ifndef INFO_STRUCT
 #define INFO_STRUCT
 
+#include <pcap.h>
+#include <string>
+
 typedef struct _info_head{
-	u_int src_ip;
-	u_int dest_ip;
+	u_long src_ip;
+	u_long dest_ip;
 	u_int src_port; 
 	u_int dest_port;
+	std::string flow_name;
 
 	bool operator<(const struct _info_head & other) const {
 	//Must be overloaded as public if this struct is being used as the KEY in STL-map.
-		if (this->src_ip < other.src_ip) return true;
-		if (this->dest_ip < other.dest_ip) return true;
-		if (this->src_port < other.src_port) return true;
-		if (this->dest_port < other.dest_port) return true;
-		return false;
+		return (this->flow_name < other.flow_name);
 	}
 
 	bool operator==(const struct _info_head & other) const{
@@ -24,6 +22,52 @@ typedef struct _info_head{
 				this->dest_ip == other.dest_ip &&
 				this->src_port == other.src_port &&
 				this->dest_port == other.dest_port;
+	}
+
+	void generate_flow_name(){
+		//For use flowname in the filename
+		char name[50];
+		sprintf(name, "%ld.%ld.%ld.%ld_%ld - %ld.%ld.%ld.%ld_%ld",
+			(this->src_ip & 0xff000000) >> 24,
+			(this->src_ip & 0x00ff0000) >> 16,
+			(this->src_ip & 0x0000ff00) >> 8,
+			this->src_ip & 0x000000ff,
+			this->src_port,
+			(this->dest_ip & 0xff000000) >> 24,
+			(this->dest_ip & 0x00ff0000) >> 16,
+			(this->dest_ip & 0x0000ff00) >> 8,
+			this->dest_ip & 0x000000ff,
+			this->dest_port);
+		this->flow_name.assign(name);
+	}
+
+	void generate_flow_name_2(){
+		//For actually use.
+		char name[50];
+		sprintf(name, "%ld.%ld.%ld.%ld:%ld - %ld.%ld.%ld.%ld:%ld",
+			(this->src_ip & 0xff000000) >> 24,
+			(this->src_ip & 0x00ff0000) >> 16,
+			(this->src_ip & 0x0000ff00) >> 8,
+			this->src_ip & 0x000000ff,
+			this->src_port,
+			(this->dest_ip & 0xff000000) >> 24,
+			(this->dest_ip & 0x00ff0000) >> 16,
+			(this->dest_ip & 0x0000ff00) >> 8,
+			this->dest_ip & 0x000000ff,
+			this->dest_port);
+		this->flow_name.assign(name);
+	}
+
+	struct _info_head reversed_info_head() const{
+		info_head rih;
+
+		rih.dest_ip = this->src_ip;
+		rih.src_ip = this->dest_ip;
+		rih.dest_port = this->src_port;
+		rih.src_port = this->dest_port;
+		rih.generate_flow_name();
+
+		return rih;
 	}
 } info_head;
 
@@ -60,7 +104,6 @@ typedef struct _flow_info{
 	double skew_tim_intv;
 	double kurt_tim_intv;
 
-//	struct _flow_info(const list<pkt_info> &);
 } flow_info;
 
 typedef struct _pkt{
@@ -72,17 +115,5 @@ typedef struct _uni_dir_flow{
 	flow_info A;
 	flow_info B;
 } uni_dir_flow;
-
-info_head reversed_info_head(const info_head & ih){
-	info_head rih;
-
-	rih.dest_ip = ih.src_ip;
-	rih.src_ip = ih.dest_ip;
-
-	rih.dest_port = ih.src_port;
-	rih.src_port = ih.dest_port;
-
-	return rih;
-}
 
 #endif
