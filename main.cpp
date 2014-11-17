@@ -16,6 +16,12 @@ static pkt_list pl;
 static pkt_info_map pim;
 static flow_info_map fim;
 
+static u_long pkt_counter = 0;
+static u_long buffer_full_times = 0;
+
+const unsigned int ETHER_HEAD_LEN = 14;
+const unsigned int UDP_HEAD_LEN = 8;
+
 int main(int argc, char **argv)
 {
 	pcap_t *fp;
@@ -38,41 +44,23 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	//Generate proper file name
-	//char str_time[30];
-	//struct tm *p_time;
-	//time_t t_temp = time(NULL);
-	//p_time = localtime(&t_temp);
-
-	//sprintf(str_time, "%4d-%2d-%2d-%2d-%2d-%2d", 
-	//	p_time->tm_year + 1900,
-	//	p_time->tm_mon + 1,
-	//	p_time->tm_mday,
-	//	p_time->tm_hour,
-	//	p_time->tm_min,
-	//	p_time->tm_sec);
-
-	//char resname[150];
-	//strcpy(resname, argv[1]);
-	//strcat(resname, "-");
-	//strcat(resname, str_time);
-	//strcat(resname, ".txt");
-	//
-	//file = fopen(resname, "w");
-
 	/* read and dispatch packets until EOF is reached */
-	pcap_loop(fp, 0, dispatcher_handler, NULL);
-
-
+	printf("Reading the file %s...\n", argv[1]);
+	pcap_loop(fp, 0, dispatcher_handler, NULL);	
 	pcap_close(fp);
 
+	//Handle the data
+	printf("Processing...\n");
 	pim.handler(pl);
-	//pim.writer(argv[1]);
 	fim.handler(pim);
-	fim.writer(argv[1]);
 
-	//fclose(file);
-
+	//Write the result.
+	printf("Writing the result...\n");
+	if(fim.writer(argv[1]) == 1)
+		printf("All work done. Exiting...\n");
+	else
+		printf("Failed to write the result.\n");
+	
 	return 0;
 }
 
@@ -84,15 +72,12 @@ void dispatcher_handler(u_char *temp1,
 {
 	u_int i=0;
 
-	const unsigned int ETHER_HEAD_LEN = 14;
-	const unsigned int UDP_HEAD_LEN = 8;
-	
 	/*
 	 * unused variable
 	 */
 //	(VOID*)temp1;
 
-	/* print packet information */
+	/* Capture the packet information */
 
 	u_char	ip_header_len, 
 			total_len[2], 
@@ -147,8 +132,8 @@ void dispatcher_handler(u_char *temp1,
 
 		tih.src_ip = ((u_long)src_ip[0] << 24) | ((u_long)src_ip[1] << 16) | ((u_long)src_ip[2] << 8) | (u_long)src_ip[3];
 		tih.dest_ip = ((u_long)dest_ip[0] << 24) | ((u_long)dest_ip[1] << 16) | ((u_long)dest_ip[2] << 8) | (u_long)dest_ip[3];
-		tih.src_port = ((u_int)src_port[0] << 8) | (u_int)src_port[1];
-		tih.dest_port = ((u_int)dest_port[0] << 8) | (u_int)dest_port[1];
+		tih.src_port = ((u_short)src_port[0] << 8) | (u_short)src_port[1];
+		tih.dest_port = ((u_short)dest_port[0] << 8) | (u_short)dest_port[1];
 		//tih.generate_flow_name();
 		tih.generate_flow_name_2();
 
@@ -157,7 +142,20 @@ void dispatcher_handler(u_char *temp1,
 		tpi.pkt_size = header->len;
 		tpi.pld_size = payload_len;
 		
-		pl.append(tih, tpi);
+		if(pkt_counter <= 1000000){
+			pl.append(tih, tpi);
+			++ pkt_counter;
+		}
+		else{
+			++ buffer_full_times;
+			printf("%ldM packets have already been read. Now buffer is full. Processing...\n", buffer_full_times);
+			pim.handler(pl);
+			pl.head_to_pkt.clear();
+									
+			printf("Go on reading...\n");
+			pl.append(tih, tpi);
+			pkt_counter = 1;
+		}
 
-	} //End of 	if( !u_char_equ(broadcast_head, pkt_data, 6) )
+	} //End of if( !u_char_equ(broadcast_head, pkt_data, 6) )
 }

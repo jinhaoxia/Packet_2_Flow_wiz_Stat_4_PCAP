@@ -7,8 +7,8 @@
 typedef struct _info_head{
 	u_long src_ip;
 	u_long dest_ip;
-	u_int src_port; 
-	u_int dest_port;
+	u_short src_port; 
+	u_short dest_port;
 	std::string flow_name;
 
 	bool operator<(const struct _info_head & other) const {
@@ -74,8 +74,8 @@ typedef struct _info_head{
 typedef struct _pkt_info{
 	u_long sec;
 	u_long usec;
-	u_long pkt_size;
-	u_long pld_size;
+	u_int pkt_size;
+	u_int pld_size;
 } pkt_info;
 
 typedef struct _flow_info{

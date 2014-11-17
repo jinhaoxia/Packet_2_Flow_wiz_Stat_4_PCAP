@@ -14,6 +14,8 @@ const u_long SEC_TO_uSEC = 1000000L;
 
 const int VALID_FLOW_THRES = 10;
 
+const double EPSILON = 0.00001f;
+
 u_long u_long_max(){
 	u_long max = 0x7f;
 	for(int i = 1; i < sizeof(u_long); ++i){
@@ -31,7 +33,7 @@ u_long total_cal(const vector<u_long> &);
 u_long max_cal(const vector<u_long> &);
 u_long min_cal(const vector<u_long> &);
 double mean_cal(const vector<u_long> &);
-double stde_cal(const vector<u_long> &, const double &);
+double stde_cal(const vector<u_long> &, const double &, const double &);
 double skew_cal(const vector<u_long> &, const double &, const double &);
 double kurt_cal(const vector<u_long> &, const double &, const double &, const double &);
 
@@ -47,10 +49,9 @@ bool stat_cal(const vector<pkt_info> & p, flow_info * p_fi){
 
 	//tim_intv.push_back(intv);
 	//It should be highly noticed here that if there are n packets in a flow,
-	//then there will be (n - 1) time intervals for the same flow.
+	//then there will be (n - 1) time intervals for this flow.
 	pkt_size.push_back(pii->pkt_size);
-	pld_size.push_back(pii->pld_size);
-	
+	pld_size.push_back(pii->pld_size);	
 
 	//Fill the three vectors
 	for(++ pii; pii != p.end(); ++ pii, ++ pii_p){
@@ -61,11 +62,10 @@ bool stat_cal(const vector<pkt_info> & p, flow_info * p_fi){
 
 		pkt_size.push_back(pii->pkt_size);
 		pld_size.push_back(pii->pld_size);
-	}
-		
+	}		
 
 	//Fill the *p_fi
-	p_fi->total_pkt_count = count_cal(pkt_size);
+	p_fi->total_pkt_count = (u_long)pkt_size.size();
 	if( p_fi->total_pkt_count < VALID_FLOW_THRES ) return false;
 
 	p_fi->total_pkt_size = total_cal(pkt_size);
@@ -84,9 +84,9 @@ bool stat_cal(const vector<pkt_info> & p, flow_info * p_fi){
 	p_fi->mean_tim_intv = mean_cal(tim_intv);
 
 	//Members below have dependecy on members above. Do NOT re-order this part.
-	p_fi->stde_pkt_size = stde_cal(pkt_size, p_fi->mean_pkt_size);
-	p_fi->stde_pld_size = stde_cal(pld_size, p_fi->mean_pld_size);
-	p_fi->stde_tim_intv = stde_cal(tim_intv, p_fi->mean_tim_intv);
+	p_fi->stde_pkt_size = stde_cal( pkt_size, p_fi->mean_pkt_size, (p_fi->max_pkt_size - p_fi->min_pkt_size) );
+	p_fi->stde_pld_size = stde_cal( pld_size, p_fi->mean_pld_size, (p_fi->max_pld_size - p_fi->min_pld_size) );
+	p_fi->stde_tim_intv = stde_cal( tim_intv, p_fi->mean_tim_intv, (p_fi->max_tim_intv - p_fi->min_tim_intv) );
 
 	p_fi->skew_pkt_size = skew_cal(pkt_size, p_fi->mean_pkt_size, p_fi->stde_pkt_size);
 	p_fi->skew_pld_size = skew_cal(pld_size, p_fi->mean_pld_size, p_fi->stde_pld_size);
@@ -147,9 +147,15 @@ double mean_cal(const vector<u_long> & v){
 	return mean;
 }
 
-double stde_cal(const vector<u_long> & v, const double & mean){
+double stde_cal(const vector<u_long> & v, 
+				const double & mean, 
+				const double & diff_max_min){
 	//STandard DEviation is sqrt of variance. Defined below
 	//STDE = sqrt( MEAN(X^2) - MEAN(X) )
+
+	//Due to there is no negative in v, so if the mean equals 0.0f, the numbers in v is all 0.
+	if ( mean < EPSILON || diff_max_min < EPSILON ) return 0.0f;
+
 	vector<u_long>::const_iterator it = v.begin();
 	
 	double x_2_mean = 0, x_2 = 0;
@@ -160,9 +166,16 @@ double stde_cal(const vector<u_long> & v, const double & mean){
 	return sqrt( x_2_mean - mean * mean );
 }
 
-double skew_cal(const vector<u_long> & v, const double & mean, const double & stde){
+double skew_cal(const vector<u_long> & v, 
+				const double & mean, 
+				const double & stde){
 	//SKEWness is defined below
 	//SKEW = ( MEAN(X^3) - 3 * STDE(X)^2 * MEAN(X) - MEAN(X)^3 ) / STDE(X)^3
+
+	//Due to there is no negative in v, so if the mean equals 0.0f, the numbers in v is all 0.
+	//If the stde is 0, then the skewness is meaningless because of the devided by 0 error.
+	if ( mean < EPSILON || stde < EPSILON ) return 0.0f;
+
 	vector<u_long>::const_iterator it = v.begin();
 	
 	double x_3_mean = 0, x_3;
@@ -174,9 +187,17 @@ double skew_cal(const vector<u_long> & v, const double & mean, const double & st
 	return ( x_3_mean - 3 * pow(stde, 2) * mean - pow(mean, 3) ) / pow(stde, 3);
 }
 
-double kurt_cal(const vector<u_long> & v, const double & mean, const double & stde, const double & skew){
+double kurt_cal(const vector<u_long> & v, 
+				const double & mean, 
+				const double & stde, 
+				const double & skew){
 	//KURTosis is defined below
 	//KURT = ( E(X^4) - 4 * SKEW(X) * STDE(X)^3 * MEAN(X) - 6 * STDE(X)^2 * MEAN(X)^2 - MEAN(X)^4 ) / STDE(X)^4
+
+	//Due to there is no negative in v, so if the mean equals 0.0f, the numbers in v is all 0.
+	//If the stde is 0, then the skewness is meaningless because of the devided by 0 error.
+	if ( mean < EPSILON || stde < EPSILON ) return 0.0f;
+
 	vector<u_long>::const_iterator it = v.begin();
 	
 	double x_4_mean = 0 ,x_4 = 0;

@@ -38,6 +38,7 @@ public:
 
 public:
 	int handler(const pkt_list & p){
+		//Core handling module. DO NOT modify!
 		typedef vector<pkt>::const_iterator pkt_it;
 		typedef map<info_head, vector<pkt_info> >::iterator map_it;
 
@@ -160,11 +161,11 @@ public:
 		strcpy(filename, pcap_file_name);
 		strcat(filename, " - ");
 		strcat(filename, str_time);
-		strcat(filename, ".txt");
-		
+		strcat(filename, ".csv");	
 
 		//Open the file
 		FILE * fp = fopen(filename, "w");
+		if(fp == NULL) return 0;
 
 		//Travarse the map head_to_flow and write file
 		typedef map<info_head, flow_info>::iterator flow_map_it;
@@ -183,8 +184,9 @@ double stde_pld_size, double skew_pld_size, double kurt_pld_size, \
 u_long max_tim_intv, u_long min_tim_intv, double mean_tim_intv, \
 double stde_tim_intv, double skew_tim_intv, double kurt_tim_intv\n");
 
-		for (; fmi != head_to_flow.end(); ++ fmi)
-			fprintf(fp, "%s, %ld, %ld, %ld, \
+		//Print the data row.
+		for (; fmi != head_to_flow.end(); ++ fmi){
+			if ( fprintf(fp, "%s, %ld, %ld, %ld, \
 %ld, %ld, %lf, %lf, %lf, %lf, \
 %ld, %ld, %lf, %lf, %lf, %lf, \
 %ld, %ld, %lf, %lf, %lf, %lf\n", 
@@ -198,7 +200,12 @@ double stde_tim_intv, double skew_tim_intv, double kurt_tim_intv\n");
 			fmi->second.stde_pld_size, fmi->second.skew_pld_size, fmi->second.kurt_pld_size,
 			
 			fmi->second.max_tim_intv, fmi->second.min_tim_intv, fmi->second.mean_tim_intv,
-			fmi->second.stde_tim_intv, fmi->second.skew_tim_intv, fmi->second.kurt_tim_intv);
+			fmi->second.stde_tim_intv, fmi->second.skew_tim_intv, fmi->second.kurt_tim_intv) == EOF ){
+
+				fclose(fp);
+				return 0;
+			}//End of if
+		}//End of for (; fmi != head_to_flow.end(); ++ fmi)
 		
 		//End-ups
 		fclose(fp);
