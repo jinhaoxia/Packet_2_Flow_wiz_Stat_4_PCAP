@@ -139,40 +139,11 @@ public:
 		return 1;
 	}
 
-	int writer(const char * pcap_file_name){
+	int writer(FILE * pcap_file){
 		//This method is for use actually.
 
-		
-		//Create filename
-		char str_time[20];
-		struct tm *p_time;
-		time_t t_temp = time(NULL);
-		p_time = localtime(&t_temp);
-
-		sprintf(str_time, "%4d-%2d-%2d-%2d-%2d-%2d", 
-			p_time->tm_year + 1900,
-			p_time->tm_mon + 1,
-			p_time->tm_mday,
-			p_time->tm_hour,
-			p_time->tm_min,
-			p_time->tm_sec);
-
-		char filename[200];
-		strcpy(filename, pcap_file_name);
-		strcat(filename, " - ");
-		strcat(filename, str_time);
-		strcat(filename, ".csv");	
-
-		//Open the file
-		FILE * fp = fopen(filename, "w");
-		if(fp == NULL) return 0;
-
-		//Travarse the map head_to_flow and write file
-		typedef map<info_head, flow_info>::iterator flow_map_it;
-		flow_map_it fmi = head_to_flow.begin();
-		
 		//Print the title row.
-		fprintf(fp, "src_ip : src_port - dest_ip : dest_port, \
+		fprintf(pcap_file, "src_ip : src_port - dest_ip : dest_port, Trans_proto, \
 u_long total_pkt_size, u_long total_pld_size, u_long total_pkt_count, \
 \
 u_long max_pkt_size, u_long min_pkt_size, double mean_pkt_size, \
@@ -184,9 +155,13 @@ double stde_pld_size, double skew_pld_size, double kurt_pld_size, \
 u_long max_tim_intv, u_long min_tim_intv, double mean_tim_intv, \
 double stde_tim_intv, double skew_tim_intv, double kurt_tim_intv\n");
 
-		//Print the data row.
+		//Travarse the map head_to_flow and write file
+		typedef map<info_head, flow_info>::iterator flow_map_it;
+		flow_map_it fmi = head_to_flow.begin();
+		
+		//Print the data rows.
 		for (; fmi != head_to_flow.end(); ++ fmi){
-			if ( fprintf(fp, "%s, %ld, %ld, %ld, \
+			if ( fprintf(pcap_file, "%s, %ld, %ld, %ld, \
 %ld, %ld, %lf, %lf, %lf, %lf, \
 %ld, %ld, %lf, %lf, %lf, %lf, \
 %ld, %ld, %lf, %lf, %lf, %lf\n", 
@@ -202,13 +177,11 @@ double stde_tim_intv, double skew_tim_intv, double kurt_tim_intv\n");
 			fmi->second.max_tim_intv, fmi->second.min_tim_intv, fmi->second.mean_tim_intv,
 			fmi->second.stde_tim_intv, fmi->second.skew_tim_intv, fmi->second.kurt_tim_intv) == EOF ){
 
-				fclose(fp);
 				return 0;
 			}//End of if
 		}//End of for (; fmi != head_to_flow.end(); ++ fmi)
 		
-		//End-ups
-		fclose(fp);
+		//End-ups normally
 		return 1;
 	}
 };

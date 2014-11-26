@@ -1,4 +1,4 @@
-﻿生成启动时间为 2014/11/18 2:07:14。
+﻿生成启动时间为 2014/11/27 3:15:14。
      1>项目“F:\Seclab\Github\Packet_2_Flow_wiz_Stat_4_PCAP\1031.vcxproj”在节点 2 上(rebuild 个目标)。
      1>_PrepareForClean:
          正在删除文件“.\Debug\1031.lastbuildstate”。
@@ -7,7 +7,7 @@
        ClCompile:
          C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _VC80_UPGRADE=0x0600 /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /Gy- /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug\\" /Fd".\Debug\vc100.pdb" /FR".\Debug\\" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\info_struct.h(40): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\info_struct.h(39): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files\microsoft visual studio 10.0\vc\include\stdio.h(371) : 参见“sprintf”的声明
      1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\info_struct.h(57): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files\microsoft visual studio 10.0\vc\include\stdio.h(371) : 参见“sprintf”的声明
@@ -29,20 +29,24 @@
                  c:\program files\microsoft visual studio 10.0\vc\include\string.h(110) : 参见“strcat”的声明
      1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\pkt_handler.h(109): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files\microsoft visual studio 10.0\vc\include\stdio.h(234) : 参见“fopen”的声明
-     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\pkt_handler.h(150): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(53): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files\microsoft visual studio 10.0\vc\include\time.inl(112) : 参见“localtime”的声明
-     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\pkt_handler.h(158): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(61): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files\microsoft visual studio 10.0\vc\include\stdio.h(371) : 参见“sprintf”的声明
-     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\pkt_handler.h(161): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(65): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files\microsoft visual studio 10.0\vc\include\string.h(105) : 参见“strcpy”的声明
-     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\pkt_handler.h(162): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(66): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files\microsoft visual studio 10.0\vc\include\string.h(110) : 参见“strcat”的声明
-     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\pkt_handler.h(163): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(67): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files\microsoft visual studio 10.0\vc\include\string.h(110) : 参见“strcat”的声明
-     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\pkt_handler.h(164): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(68): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files\microsoft visual studio 10.0\vc\include\string.h(110) : 参见“strcat”的声明
-     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\pkt_handler.h(167): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(72): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files\microsoft visual studio 10.0\vc\include\stdio.h(234) : 参见“fopen”的声明
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(97): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files\microsoft visual studio 10.0\vc\include\time.inl(112) : 参见“localtime”的声明
+     1>f:\seclab\github\packet_2_flow_wiz_stat_4_pcap\main.cpp(104): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files\microsoft visual studio 10.0\vc\include\stdio.h(371) : 参见“sprintf”的声明
        ManifestResourceCompile:
          C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo".\Debug\1031.exe.embed.manifest.res" .\Debug\1031_manifest.rc 
        Link:
@@ -67,4 +71,4 @@
 
 生成成功。
 
-已用时间 00:00:03.76
+已用时间 00:00:04.10

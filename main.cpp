@@ -24,7 +24,7 @@ const unsigned int UDP_HEAD_LEN = 8;
 
 int main(int argc, char **argv)
 {
-	pcap_t *fp;
+	pcap_t *pcap_file;
 	char errbuf[PCAP_ERRBUF_SIZE];
 
 	//command line mode
@@ -36,31 +36,74 @@ int main(int argc, char **argv)
 	}
 	
 	/* Open the capture file */
-	if ((fp = pcap_open_offline(argv[1],			// name of the device
+	if ((pcap_file = pcap_open_offline(argv[1],			// name of the device
 						 errbuf					// error buffer
 						 )) == NULL)
 	{
-		fprintf(stderr,"\nUnable to open the file %s.\n", argv[1]);
+		fprintf(stderr,"\nUnable to open the pcap file %s.\n", argv[1]);
+		return -1;
+	}
+
+			
+	//Generate filename and create file, to assess the processing time.
+	char str_time[20];
+	struct tm *p_time;
+
+	time_t t_temp = time(NULL);
+	p_time = localtime(&t_temp);
+
+	sprintf(str_time, "%4d-%2d-%2d-%2d-%2d-%2d", 
+		p_time->tm_year + 1900,
+		p_time->tm_mon + 1,
+		p_time->tm_mday,
+		p_time->tm_hour,
+		p_time->tm_min,
+		p_time->tm_sec);
+	printf("This work begins at: %s.\n", str_time);
+
+	char filename[200];
+	strcpy(filename, argv[1]);
+	strcat(filename, " - ");
+	strcat(filename, str_time);
+	strcat(filename, ".csv");	
+
+	//Open the result file
+	FILE * csv_file;
+	if( (csv_file = fopen(filename, "w") ) == NULL ){
+		fprintf(stderr, "\nUnable to create the result file %s.\n", filename);
 		return -1;
 	}
 
 	/* read and dispatch packets until EOF is reached */
-	printf("Reading the file %s...\n", argv[1]);
-	pcap_loop(fp, 0, dispatcher_handler, NULL);	
-	pcap_close(fp);
+	printf("Reading the pcap file %s...\n", argv[1]);
+	pcap_loop(pcap_file, 0, dispatcher_handler, NULL);	
+	pcap_close(pcap_file);
 
-	//Handle the data
+	//Handle the packet data 
 	printf("Processing...\n");
 	pim.handler(pl);
 	fim.handler(pim);
 
 	//Write the result.
 	printf("Writing the result...\n");
-	if(fim.writer(argv[1]) == 1)
+	if(fim.writer(csv_file) == 1)
 		printf("All work done. Exiting...\n");
 	else
-		printf("Failed to write the result.\n");
-	
+		printf("Failed to write the result.\n");	
+
+	fclose(csv_file);
+
+	t_temp = time(NULL);
+	p_time = localtime(&t_temp);
+	sprintf(str_time, "%4d-%2d-%2d-%2d-%2d-%2d", 
+		p_time->tm_year + 1900,
+		p_time->tm_mon + 1,
+		p_time->tm_mday,
+		p_time->tm_hour,
+		p_time->tm_min,
+		p_time->tm_sec);
+	printf("This work finished at: %s.\n", str_time);
+
 	return 0;
 }
 
@@ -77,8 +120,11 @@ void dispatcher_handler(u_char *temp1,
 	 */
 //	(VOID*)temp1;
 
-	/* Capture the packet information */
+	//Variable in head
+	unsigned int VLAN_HEAD_LEN = 0;
+	bool IS_TCP = true;
 
+	/* Capture the packet information */
 	u_char	ip_header_len, 
 			total_len[2], 
 			trans_proto, 
@@ -89,37 +135,44 @@ void dispatcher_handler(u_char *temp1,
 			trans_header_len;
 
 	u_char broadcast_head[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+	u_char vlan_head[2] = {0x81, 0x00};
 
 	if( !u_char_equ(broadcast_head, pkt_data, 6) ){ //Is broadcast pkt
-		u_char_cpy(&ip_header_len, pkt_data + ETHER_HEAD_LEN, 1);
+		//If there is a VLAN head
+		VLAN_HEAD_LEN = 0;
+		if(u_char_equ(vlan_head, pkt_data + ETHER_HEAD_LEN - 2, 2) )
+			VLAN_HEAD_LEN = 4;
+
+		u_char_cpy(&ip_header_len, pkt_data + ETHER_HEAD_LEN + VLAN_HEAD_LEN, 1);
 		//IP header length is counted in 4 bytes.
 		ip_header_len &= 0x0f;
 		ip_header_len *= 4;
 				
-		u_char_cpy(total_len, pkt_data + ETHER_HEAD_LEN + 2, 2);
+		u_char_cpy(total_len, pkt_data + ETHER_HEAD_LEN + VLAN_HEAD_LEN + 2, 2);
 
-		u_char_cpy(&trans_proto, pkt_data + ETHER_HEAD_LEN + 9, 1);
+		IS_TCP = true;
+		u_char_cpy(&trans_proto, pkt_data + ETHER_HEAD_LEN + VLAN_HEAD_LEN + 9, 1);
 		switch (trans_proto)
 		{
 		case 0x06: //TCP
-			u_char_cpy(&trans_header_len, pkt_data + ETHER_HEAD_LEN + ip_header_len + 12, 1);
+			u_char_cpy(&trans_header_len, pkt_data + ETHER_HEAD_LEN + VLAN_HEAD_LEN + ip_header_len + 12, 1);
 			//The high 4 bits is TCP header length, also counted in 4 bytes. So operate below is a direct way.
 			trans_header_len = (trans_header_len & 0xf0) >> 2;
 			break;
 		
 		case 0x11: //UDP
-			if (trans_proto == 0x11)
-				trans_header_len = UDP_HEAD_LEN;
+			trans_header_len = UDP_HEAD_LEN;
+			IS_TCP = false;
 			break;
 
 		default:
 			return;
 		}
 
-		u_char_cpy(src_ip, pkt_data + ETHER_HEAD_LEN + 12, 4);
-		u_char_cpy(dest_ip, pkt_data + ETHER_HEAD_LEN + 16, 4);
-		u_char_cpy(src_port, pkt_data + ETHER_HEAD_LEN + (u_int)ip_header_len, 2);
-		u_char_cpy(dest_port, pkt_data + ETHER_HEAD_LEN + (u_int)ip_header_len + 2, 2);
+		u_char_cpy(src_ip, pkt_data + ETHER_HEAD_LEN + VLAN_HEAD_LEN + 12, 4);
+		u_char_cpy(dest_ip, pkt_data + ETHER_HEAD_LEN + VLAN_HEAD_LEN + 16, 4);
+		u_char_cpy(src_port, pkt_data + ETHER_HEAD_LEN + VLAN_HEAD_LEN + (u_int)ip_header_len, 2);
+		u_char_cpy(dest_port, pkt_data + ETHER_HEAD_LEN + VLAN_HEAD_LEN + (u_int)ip_header_len + 2, 2);
 
 		unsigned int payload_len = ((u_int)total_len[0] << 8) + (u_int)total_len[1] - (u_int)ip_header_len - (u_int)trans_header_len;
 
@@ -135,6 +188,7 @@ void dispatcher_handler(u_char *temp1,
 		tih.src_port = ((u_short)src_port[0] << 8) | (u_short)src_port[1];
 		tih.dest_port = ((u_short)dest_port[0] << 8) | (u_short)dest_port[1];
 		//tih.generate_flow_name();
+		tih.isTCP = IS_TCP;
 		tih.generate_flow_name_2();
 
 		tpi.sec = header->ts.tv_sec;

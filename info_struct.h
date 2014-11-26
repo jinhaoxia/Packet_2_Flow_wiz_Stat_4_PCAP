@@ -9,6 +9,7 @@ typedef struct _info_head{
 	u_long dest_ip;
 	u_short src_port; 
 	u_short dest_port;
+	bool isTCP;
 	std::string flow_name;
 
 	bool operator<(const struct _info_head & other) const {
@@ -18,16 +19,13 @@ typedef struct _info_head{
 
 	bool operator==(const struct _info_head & other) const{
 		//Optional
-		return	this->src_ip == other.src_ip && 
-				this->dest_ip == other.dest_ip &&
-				this->src_port == other.src_port &&
-				this->dest_port == other.dest_port;
+		return (this->flow_name == other.flow_name);
 	}
 
 	void generate_flow_name(){
 		//For use flowname in the filename
-		char name[50];
-		sprintf(name, "%ld.%ld.%ld.%ld_%ld - %ld.%ld.%ld.%ld_%ld",
+		char name[100];
+		sprintf(name, "%ld.%ld.%ld.%ld_%ld - %ld.%ld.%ld.%ld_%ld, %s",
 			(this->src_ip & 0xff000000) >> 24,
 			(this->src_ip & 0x00ff0000) >> 16,
 			(this->src_ip & 0x0000ff00) >> 8,
@@ -37,14 +35,15 @@ typedef struct _info_head{
 			(this->dest_ip & 0x00ff0000) >> 16,
 			(this->dest_ip & 0x0000ff00) >> 8,
 			this->dest_ip & 0x000000ff,
-			this->dest_port);
+			this->dest_port,
+			((this->isTCP) ? "TCP" : "UDP") );
 		this->flow_name.assign(name);
 	}
 
 	void generate_flow_name_2(){
 		//For actually use.
-		char name[50];
-		sprintf(name, "%ld.%ld.%ld.%ld:%ld - %ld.%ld.%ld.%ld:%ld",
+		char temp_name[100];
+		sprintf(temp_name, "%ld.%ld.%ld.%ld:%ld - %ld.%ld.%ld.%ld:%ld, %s",
 			(this->src_ip & 0xff000000) >> 24,
 			(this->src_ip & 0x00ff0000) >> 16,
 			(this->src_ip & 0x0000ff00) >> 8,
@@ -54,8 +53,9 @@ typedef struct _info_head{
 			(this->dest_ip & 0x00ff0000) >> 16,
 			(this->dest_ip & 0x0000ff00) >> 8,
 			this->dest_ip & 0x000000ff,
-			this->dest_port);
-		this->flow_name.assign(name);
+			this->dest_port,
+			((this->isTCP) ? "TCP" : "UDP") );
+		this->flow_name.assign(temp_name);
 	}
 
 	struct _info_head reversed_info_head() const{
